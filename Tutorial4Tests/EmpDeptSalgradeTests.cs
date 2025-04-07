@@ -156,12 +156,11 @@ public class EmpDeptSalgradeTests
     {
         var emps = Database.GetEmps();
 
-        var result =
-            from e in emps
-            where e.Sal > (from sub in emps
-                      where sub.DeptNo == e.DeptNo
-                      select sub.Sal).Average()
-            select new { e.EName };
+        var result = emps
+            .Where( emp => emp.Sal > emps
+                .Where(e => e.DeptNo == emp.DeptNo).Average(e=> e.Sal))
+            .Select(emp => emp.EName)
+            .ToList();
         
         Assert.Contains("ALLEN", result);
     }
